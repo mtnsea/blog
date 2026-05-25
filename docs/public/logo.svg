@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="AC logo">
+  <rect width="128" height="128" rx="28" fill="#080b13"/>
+  <path d="M34 92 62 30h10l28 62H86l-6-15H54l-6 15H34Zm25-27h16L67 45l-8 20Z" fill="#44d7b6"/>
+  <path d="M88 91c-13 7-31 3-39-10l10-8c6 8 16 10 25 5l4 13Z" fill="#ffcc66"/>
+</svg>
