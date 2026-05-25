@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  base: '/',
+  base: '/portfolio/',
   title: 'Mtnsea',
   description: 'Mtnsea的前端开发作品集与个人简历，聚焦 Vue、UniApp、Flutter、多端应用和 AI 辅助研发。',
   lang: 'zh-CN',
