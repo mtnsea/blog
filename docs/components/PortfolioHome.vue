@@ -2,6 +2,10 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import LetterGlitch from "./vue-bits/LetterGlitch.vue";
+import Particles from "./vue-bits/Particles.vue";
+import ScrambleText from "./vue-bits/ScrambleText.vue";
+import ShinyText from "./vue-bits/ShinyText.vue";
 
 type Project = {
   title: string;
@@ -13,7 +17,7 @@ type Project = {
 };
 
 const profile = {
-  name: "Mtnsea | Portfolio",
+  name: "Mtnsea",
   title: "Frontend Developer / AI Application Developer",
   intro:
     "4 年前端开发经验，具备 Vue3、TypeScript、UniApp、Flutter 等技术栈项目开发能力，长期参与互联网医疗、生活服务、多端应用与 AI 工作流落地。",
@@ -366,20 +370,10 @@ onMounted(() => {
     gsap
       .timeline({ defaults: { ease: "power3.out" } })
       .from(".hero-kicker", { y: 18, opacity: 0, duration: 0.6 })
-      .from(".hero-title span", { yPercent: 110, duration: 0.86, stagger: 0.08 }, "-=0.25")
-      .from(".hero-copy", { y: 20, opacity: 0, duration: 0.64 }, "-=0.35")
+      .from(".hero-copy", { y: 20, opacity: 0, duration: 0.64 }, "-=0.2")
       .from(".hero-actions .action", { y: 18, opacity: 0, duration: 0.5, stagger: 0.08 }, "-=0.28")
       .from(".stat", { y: 20, opacity: 0, duration: 0.5, stagger: 0.06 }, "-=0.18")
       .from(".orbit-panel", { scale: 0.92, opacity: 0, duration: 0.72 }, "-=0.55");
-
-    gsap.to(".aurora-field", {
-      rotate: 12,
-      scale: 1.08,
-      duration: 18,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
 
     gsap.utils.toArray<HTMLElement>(".reveal").forEach((item) => {
       gsap.to(item, {
@@ -443,15 +437,55 @@ onBeforeUnmount(() => {
 <template>
   <main class="portfolio-shell">
     <section class="portfolio-hero">
-      <div class="aurora-field" aria-hidden="true"></div>
+      <!-- Letter Glitch 矩阵背景 -->
+      <LetterGlitch
+        class="glitch-bg"
+        :glitch-colors="['rgba(68,215,182,0.12)', 'rgba(124,92,255,0.08)', 'rgba(97,179,220,0.06)']"
+        :glitch-speed="35"
+        :center-vignette="true"
+        :outer-vignette="true"
+        :smooth="true"
+      />
+      <!-- Particles 微粒子叠加层 -->
+      <Particles
+        class="particles-bg"
+        :particle-count="80"
+        :particle-spread="14"
+        :speed="0.04"
+        :particle-colors="['#44d7b6', '#61b3dc', '#7c5cff']"
+        :move-particles-on-hover="true"
+        :particle-hover-factor="0.4"
+        :alpha-particles="true"
+        :particle-base-size="40"
+        :size-randomness="1.2"
+        :camera-distance="22"
+        :disable-rotation="false"
+      />
       <div class="hero-grid">
         <div class="hero-content">
-          <p class="hero-kicker">{{ profile.title }}</p>
-          <h1 class="hero-title" :aria-label="profile.name">
-            <span>Mtn</span>
-            <span>sea</span>
-          </h1>
-          <p class="hero-copy">{{ profile.intro }}</p>
+          <ShinyText
+            class="hero-kicker"
+            :text="profile.title"
+            :speed="3"
+            :spread="60"
+            color="rgba(68,215,182,0.6)"
+            shine-color="#ffffff"
+            direction="left"
+            :disabled="false"
+          />
+          <ScrambleText
+            class="hero-title"
+            :text="profile.name"
+            :radius="140"
+            scramble-chars="!@#$%&*<>?/\\[]{}01"
+          />
+          <ScrambleText
+            class="hero-copy"
+            :text="profile.intro"
+            :radius="140"
+            scramble-chars="!@#$%&*<>?/\\[]{}01"
+          />
+          <!-- <p class="hero-copy">{{ profile.intro }}</p>。 -->
           <div class="hero-actions">
             <a class="action action-primary" href="#projects">查看作品</a>
             <a class="action action-secondary" :href="`mailto:${profile.email}`">联系我</a>
@@ -665,18 +699,38 @@ onBeforeUnmount(() => {
   isolation: isolate;
 }
 
-.aurora-field {
+.glitch-bg {
   position: absolute;
-  inset: -22% -12% auto;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+}
+
+.particles-bg {
+  position: absolute;
+  inset: 0;
   z-index: -1;
-  height: 74vh;
-  background:
-    radial-gradient(circle at 18% 36%, rgba(68, 215, 182, 0.34), transparent 22%),
-    radial-gradient(circle at 68% 20%, rgba(124, 92, 255, 0.36), transparent 24%),
-    radial-gradient(circle at 76% 72%, rgba(255, 204, 102, 0.2), transparent 18%),
-    linear-gradient(135deg, rgba(68, 215, 182, 0.08), rgba(124, 92, 255, 0.1));
-  filter: blur(8px);
-  opacity: 0.95;
+  width: 100%;
+  height: 100%;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 55%, rgba(0, 0, 0, 0.1) 100%);
+  opacity: 0.7;
+}
+
+.hero-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.08em 0.22em;
+  margin: 12px 0 22px;
+  max-width: 100%;
+  font-size: clamp(3.6rem, 7vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: 0;
+  font-weight: 900;
+  color: #e8f5f0;
+  font-family: 'Courier New', 'Fira Code', 'JetBrains Mono', monospace;
+  text-shadow: 0 0 40px rgba(68, 215, 182, 0.15);
+  cursor: default;
 }
 
 .hero-grid {
@@ -692,27 +746,24 @@ onBeforeUnmount(() => {
 .project-role,
 .company {
   margin: 0;
-  color: #44d7b6;
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  background-clip: unset;
+  -webkit-text-fill-color: unset;
 }
 
-.hero-title {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.08em 0.22em;
-  margin: 12px 0 22px;
-  overflow: hidden;
-  max-width: 100%;
-  font-size: clamp(4rem, 8vw, 8rem);
-  line-height: 0.9;
-  letter-spacing: 0;
+.section-heading p {
+  color: #61b3dc;
 }
 
-.hero-title span {
-  display: inline-block;
+.project-role {
+  color: #61b3dc;
+}
+
+.company {
+  color: #61b3dc;
 }
 
 .hero-copy {
@@ -753,8 +804,12 @@ onBeforeUnmount(() => {
 .action-primary {
   color: #08110f;
   border-color: transparent;
-  background: linear-gradient(135deg, #44d7b6, #ffcc66);
-  box-shadow: 0 20px 52px rgba(68, 215, 182, 0.22);
+  background: linear-gradient(135deg, #44d7b6, #61b3dc);
+  box-shadow: 0 0 30px rgba(68, 215, 182, 0.25), 0 0 8px rgba(97, 179, 220, 0.15);
+}
+
+.action-primary:hover {
+  box-shadow: 0 0 44px rgba(68, 215, 182, 0.35), 0 0 14px rgba(97, 179, 220, 0.25);
 }
 
 .action-secondary {
@@ -775,14 +830,20 @@ onBeforeUnmount(() => {
   min-height: 96px;
   min-width: 0;
   padding: 16px;
-  border: 1px solid var(--portfolio-line);
+  border: 1px solid rgba(97, 179, 220, 0.12);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(10, 16, 28, 0.5);
+  backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease;
+}
+
+.stat:hover {
+  border-color: rgba(97, 179, 220, 0.3);
 }
 
 .stat strong {
   display: block;
-  color: #ffcc66;
+  color: #61b3dc;
   font-size: clamp(1.45rem, 3vw, 1.8rem);
   line-height: 1.05;
   word-break: keep-all;
@@ -1006,9 +1067,17 @@ onBeforeUnmount(() => {
 .capability-card {
   min-height: 230px;
   padding: 22px;
-  border: 1px solid var(--portfolio-line);
-  border-radius: 8px;
-  background: var(--portfolio-panel);
+  border: 1px solid rgba(68, 215, 182, 0.15);
+  border-radius: 10px;
+  background: rgba(10, 16, 28, 0.7);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.capability-card:hover {
+  border-color: rgba(68, 215, 182, 0.4);
+  box-shadow: 0 0 24px rgba(68, 215, 182, 0.08), inset 0 0 24px rgba(68, 215, 182, 0.03);
+  transform: translateY(-4px);
 }
 
 .capability-card h3,
@@ -1040,19 +1109,33 @@ onBeforeUnmount(() => {
   align-items: center;
   min-height: 36px;
   padding: 0 13px;
-  border: 1px solid var(--portfolio-line);
+  border: 1px solid rgba(97, 179, 220, 0.15);
   border-radius: 999px;
-  color: #f4f8ff;
-  background: rgba(255, 255, 255, 0.07);
+  color: #d4e8f5;
+  background: rgba(97, 179, 220, 0.06);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.skill-pill:hover,
+.project-stack span:hover {
+  border-color: rgba(97, 179, 220, 0.35);
+  background: rgba(97, 179, 220, 0.12);
 }
 
 .project-board {
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
-  border: 1px solid var(--portfolio-line);
+  border: 1px solid rgba(68, 215, 182, 0.12);
   border-radius: 14px;
-  background: var(--portfolio-panel);
+  background: rgba(10, 16, 28, 0.6);
+  backdrop-filter: blur(8px);
   overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-board:hover {
+  border-color: rgba(97, 179, 220, 0.25);
+  box-shadow: 0 0 30px rgba(97, 179, 220, 0.04);
 }
 
 .project-tabs {
@@ -1079,11 +1162,12 @@ onBeforeUnmount(() => {
 
 .project-tabs button.active {
   color: var(--portfolio-text);
-  background: linear-gradient(90deg, rgba(68, 215, 182, 0.18), rgba(255, 255, 255, 0.04));
+  background: linear-gradient(90deg, rgba(68, 215, 182, 0.12), rgba(97, 179, 220, 0.04));
+  border-left: 2px solid #44d7b6;
 }
 
 .project-tabs span {
-  color: #ffcc66;
+  color: #61b3dc;
 }
 
 .project-detail {
@@ -1111,13 +1195,13 @@ onBeforeUnmount(() => {
   padding: 12px 18px;
   display: inline-block;
   margin-top: 12px;
-  color: #44d7b6;
+  color: #61b3dc;
   font-weight: 700;
   text-decoration: none;
 }
 
 .project-detail strong {
-  color: #ffcc66;
+  color: #61b3dc;
   font-size: 1.2rem;
 }
 
@@ -1131,13 +1215,20 @@ onBeforeUnmount(() => {
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 28px;
   padding: 26px;
-  border: 1px solid var(--portfolio-line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(124, 92, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(10, 16, 28, 0.5);
+  backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-item:hover {
+  border-color: rgba(124, 92, 255, 0.3);
+  box-shadow: 0 0 20px rgba(124, 92, 255, 0.05);
 }
 
 .timeline-item time {
-  color: #ffcc66;
+  color: #61b3dc;
   font-weight: 900;
 }
 
@@ -1148,9 +1239,15 @@ onBeforeUnmount(() => {
   align-items: center;
   margin: 40px var(--portfolio-page-padding) 92px;
   padding: clamp(28px, 5vw, 52px);
-  border: 1px solid rgba(68, 215, 182, 0.28);
+  border: 1px solid rgba(68, 215, 182, 0.2);
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(68, 215, 182, 0.2), rgba(124, 92, 255, 0.14)), rgba(255, 255, 255, 0.06);
+  background: linear-gradient(135deg, rgba(68, 215, 182, 0.08), rgba(97, 179, 220, 0.06)), rgba(10, 16, 28, 0.6);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.3s ease;
+}
+
+.contact-band:hover {
+  border-color: rgba(68, 215, 182, 0.4);
 }
 
 .contact-band h2 {
@@ -1211,8 +1308,8 @@ onBeforeUnmount(() => {
 }
 
 .game-stage:focus-visible {
-  border-color: #ffcc66;
-  box-shadow: 0 0 0 3px rgba(255, 204, 102, 0.2), 0 28px 80px rgba(0, 0, 0, 0.28);
+  border-color: #61b3dc;
+  box-shadow: 0 0 0 3px rgba(97, 179, 220, 0.2), 0 28px 80px rgba(0, 0, 0, 0.28);
 }
 
 .game-grid {
@@ -1438,7 +1535,7 @@ onBeforeUnmount(() => {
   }
 
   .hero-title {
-    font-size: clamp(6.8rem, 7.8vw, 9.4rem);
+    font-size: clamp(5.8rem, 5.8vw, 9.4rem);
   }
 
   .hero-copy {

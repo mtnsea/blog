@@ -59,6 +59,12 @@ body {
   padding: 0 !important;
 }
 
+/* 移除 VitePress 默认容器宽度限制，让 hero 撑满全宽 */
+.VPHome .vp-doc.container {
+  max-width: none !important;
+  padding: 0 !important;
+}
+
 .VPHome {
   margin-bottom: 0 !important;
 }
